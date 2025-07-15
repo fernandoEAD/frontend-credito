@@ -1,0 +1,36 @@
+<div class="container">
+  <h1>Consulta de Créditos</h1>
+
+  <form (ngSubmit)="buscar()" #form="ngForm" class="formulario">
+    <input type="text" name="busca" [(ngModel)]="busca" placeholder="Digite o número da NFS-e ou do Crédito" required />
+    <button type="submit">Buscar</button>
+  </form>
+
+  <div *ngIf="resultado.length > 0">
+    <h2>Resultado:</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Número Crédito</th>
+          <th>Número NFS-e</th>
+          <th>Data</th>
+          <th>Valor ISSQN</th>
+          <th>Tipo</th>
+          <th>Simples</th>
+          <th>Alíquota</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of resultado">
+          <td>{{ item.numeroCredito }}</td>
+          <td>{{ item.numeroNfse }}</td>
+          <td>{{ item.dataConstituicao }}</td>
+          <td>{{ item.valorIssqn | currency:'BRL' }}</td>
+          <td>{{ item.tipoCredito }}</td>
+          <td>{{ item.simplesNacional ? 'Sim' : 'Não' }}</td>
+          <td>{{ item.aliquota }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
