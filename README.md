@@ -1,59 +1,219 @@
-# FrontendCredito
+# Sistema de Consulta de Créditos - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+Sistema web desenvolvido em Angular para consulta de créditos constituídos, permitindo busca por número de NFS-e ou número do crédito.
 
-## Development server
+## 🚀 Funcionalidades
 
-To start a local development server, run:
+- ✅ **Busca inteligente**: Diferencia automaticamente entre número de crédito (≤10 dígitos) e NFS-e (>10 dígitos)
+- ✅ **Interface responsiva**: Otimizada para desktop, tablet e mobile
+- ✅ **Validações robustas**: Verificação de formato, tamanho e caracteres
+- ✅ **Feedback visual**: Loading indicators, mensagens de erro específicas
+- ✅ **Experiência do usuário**: Design moderno com animações suaves
+- ✅ **Todos os campos**: Exibe informações completas dos créditos
 
+## 🛠️ Tecnologias
+
+- **Angular 19.2.0** - Framework principal
+- **TypeScript** - Linguagem de desenvolvimento
+- **SCSS** - Estilização avançada
+- **RxJS** - Programação reativa
+- **Angular Forms** - Gerenciamento de formulários
+
+## 📋 Dados Exibidos
+
+O sistema exibe as seguintes informações dos créditos:
+
+- **Número do Crédito**
+- **Número da NFS-e**
+- **Data de Constituição**
+- **Valor ISSQN** (formatado em R$)
+- **Tipo de Crédito** (com badge colorido)
+- **Simples Nacional** (Sim/Não com status colorido)
+- **Alíquota** (em %)
+- **Valor Faturado** (formatado em R$)
+- **Valor Dedução** (formatado em R$)
+- **Base de Cálculo** (formatado em R$)
+
+## 🚦 Como Usar
+
+1. **Digite o número**: Entre com o número da NFS-e ou do crédito
+2. **Busca automática**: O sistema identifica automaticamente o tipo
+3. **Resultados**: Visualize os dados em tabela responsiva
+4. **Limpar**: Use o botão "✕" para limpar a busca
+
+## 💻 Instalação e Execução
+
+### Pré-requisitos
+- Node.js 18+ 
+- npm ou yarn
+
+### Passos para executar
+
+1. **Clone o repositório**
 ```bash
-ng serve
+git clone <url-do-repositorio>
+cd frontend-credito
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+2. **Instale as dependências**
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+3. **Execute o servidor de desenvolvimento**
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+4. **Acesse a aplicação**
+- Abra seu navegador em `http://localhost:4200`
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Scripts Disponíveis
 
 ```bash
-ng test
+npm start          # Inicia servidor de desenvolvimento
+npm run build      # Build para produção
+npm test           # Executa testes unitários
+npm run watch      # Build em modo watch
 ```
 
-## Running end-to-end tests
+## 🐳 Docker
 
-For end-to-end (e2e) testing, run:
+Para executar com Docker:
 
 ```bash
-ng e2e
+# Build da imagem
+docker build -t frontend-credito .
+
+# Executar container
+docker run -p 80:80 frontend-credito
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 🎨 Design System
 
-## Additional Resources
+### Cores Principais
+- **Primária**: `#2563eb` (Azul)
+- **Secundária**: `#64748b` (Cinza)
+- **Sucesso**: `#10b981` (Verde)
+- **Erro**: `#ef4444` (Vermelho)
+- **Alerta**: `#f59e0b` (Amarelo)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Tipografia
+- **Fonte**: Inter (Google Fonts)
+- **Pesos**: 300, 400, 500, 600, 700
+
+### Responsividade
+- **Desktop**: > 768px
+- **Tablet**: 481px - 768px  
+- **Mobile**: ≤ 480px
+
+## 📡 API Integration
+
+O frontend consome uma API REST com os seguintes endpoints:
+
+```typescript
+// Busca por NFS-e
+GET /api/creditos/{numeroNfse}
+// Retorna: Credito[]
+
+// Busca por número do crédito  
+GET /api/creditos/credito/{numeroCredito}
+// Retorna: Credito
+```
+
+### Interface dos Dados
+
+```typescript
+interface Credito {
+  numeroCredito: string;
+  numeroNfse: string;
+  dataConstituicao: string;
+  valorIssqn: number;
+  tipoCredito: string;
+  simplesNacional: boolean;
+  aliquota: number;
+  valorFaturado: number;
+  valorDeducao: number;
+  baseCalculo: number;
+}
+```
+
+## ✅ Validações Implementadas
+
+- **Campo obrigatório**: Não permite busca vazia
+- **Apenas números**: Aceita somente dígitos numéricos
+- **Tamanho mínimo**: 3 dígitos
+- **Tamanho máximo**: 50 dígitos
+- **Trim automático**: Remove espaços extras
+
+## 🔄 Estados da Aplicação
+
+- **Inicial**: Formulário limpo
+- **Carregando**: Loading spinner durante requisições
+- **Sucesso**: Exibe resultados em tabela
+- **Erro**: Mensagens específicas por tipo de erro
+- **Vazio**: Mensagem quando não há resultados
+
+## 🚨 Tratamento de Erros
+
+- **404**: "Nenhum crédito encontrado"
+- **400**: "Dados inválidos"
+- **500**: "Erro interno do servidor"
+- **0**: "Erro de conexão"
+- **Outros**: Mensagem genérica
+
+## 📱 Recursos Mobile
+
+- Layout adaptado para telas pequenas
+- Botões com tamanho adequado para toque
+- Tabela com scroll horizontal
+- Fonte e espaçamentos otimizados
+- Formulário empilhado verticalmente
+
+## 🔧 Arquitetura
+
+```
+src/
+├── app/
+│   ├── pages/                    # Páginas da aplicação
+│   │   ├── consulta-credito.component.ts
+│   │   ├── consulta-credito.component.html
+│   │   └── consulta-credito.component.scss
+│   ├── services/                 # Serviços
+│   │   └── credito.service.ts
+│   ├── app.component.*          # Componente raiz
+│   ├── app.config.ts           # Configurações
+│   └── app.routes.ts           # Rotas
+├── styles.scss                 # Estilos globais
+└── index.html                 # HTML principal
+```
+
+## 🧪 Testes
+
+Para executar os testes:
+
+```bash
+npm test                    # Testes unitários
+npm run test:coverage      # Com cobertura
+```
+
+## 📈 Performance
+
+- **Lazy Loading**: Componentes carregados sob demanda
+- **OnPush Strategy**: Otimização de change detection
+- **Tree Shaking**: Remoção de código não utilizado
+- **Minificação**: Build otimizado para produção
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---

@@ -8,7 +8,7 @@ export interface Credito {
   dataConstituicao: string;
   valorIssqn: number;
   tipoCredito: string;
-  simplesNacional: string;
+  simplesNacional: boolean;
   aliquota: number;
   valorFaturado: number;
   valorDeducao: number;

@@ -1,36 +1,101 @@
 <div class="container">
-  <h1>Consulta de Créditos</h1>
+  <div class="header">
+    <h1>Consulta de Créditos</h1>
+    <p>Digite o número da NFS-e ou do Crédito para realizar a consulta</p>
+  </div>
 
   <form (ngSubmit)="buscar()" #form="ngForm" class="formulario">
-    <input type="text" name="busca" [(ngModel)]="busca" placeholder="Digite o número da NFS-e ou do Crédito" required />
-    <button type="submit">Buscar</button>
+        <div class="input-group">
+      <input
+        type="text"
+        name="busca"
+        [(ngModel)]="busca"
+        placeholder="Digite o número da NFS-e ou do Crédito"
+        required
+        [disabled]="carregando"
+        class="input-field"
+        (keydown)="onEnterKey($event)"
+        maxlength="50" />
+      <button type="button"
+              *ngIf="busca"
+              (click)="limparBusca()"
+              class="btn-limpar"
+              [disabled]="carregando"
+              title="Limpar busca">
+        ✕
+      </button>
+      <button type="submit" [disabled]="!busca || carregando" class="btn-buscar">
+        <span *ngIf="!carregando">Buscar</span>
+        <span *ngIf="carregando">Buscando...</span>
+      </button>
+    </div>
   </form>
 
-  <div *ngIf="resultado.length > 0">
-    <h2>Resultado:</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Número Crédito</th>
-          <th>Número NFS-e</th>
-          <th>Data</th>
-          <th>Valor ISSQN</th>
-          <th>Tipo</th>
-          <th>Simples</th>
-          <th>Alíquota</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of resultado">
-          <td>{{ item.numeroCredito }}</td>
-          <td>{{ item.numeroNfse }}</td>
-          <td>{{ item.dataConstituicao }}</td>
-          <td>{{ item.valorIssqn | currency:'BRL' }}</td>
-          <td>{{ item.tipoCredito }}</td>
-          <td>{{ item.simplesNacional ? 'Sim' : 'Não' }}</td>
-          <td>{{ item.aliquota }}%</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Loading indicator -->
+  <div *ngIf="carregando" class="loading">
+    <div class="spinner"></div>
+    <p>Consultando créditos...</p>
+  </div>
+
+  <!-- Mensagem de erro -->
+  <div *ngIf="erro" class="error-message">
+    <p>{{ erro }}</p>
+    <button (click)="limparErro()" class="btn-fechar">×</button>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="resultado.length > 0 && !carregando" class="resultados">
+    <h2>Resultado da Consulta</h2>
+    <div class="info-resultados">
+      <p>{{ resultado.length }} crédito(s) encontrado(s)</p>
+    </div>
+
+    <div class="table-container">
+      <table class="table-creditos">
+        <thead>
+          <tr>
+            <th>Número Crédito</th>
+            <th>Número NFS-e</th>
+            <th>Data Constituição</th>
+            <th>Valor ISSQN</th>
+            <th>Tipo Crédito</th>
+            <th>Simples Nacional</th>
+            <th>Alíquota</th>
+            <th>Valor Faturado</th>
+            <th>Valor Dedução</th>
+            <th>Base Cálculo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of resultado" class="row-credito">
+            <td class="numero-credito">{{ item.numeroCredito }}</td>
+            <td class="numero-nfse">{{ item.numeroNfse }}</td>
+            <td class="data">{{ item.dataConstituicao | date:'dd/MM/yyyy' }}</td>
+            <td class="valor">{{ item.valorIssqn | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="tipo">
+              <span class="badge" [class]="'badge-' + item.tipoCredito.toLowerCase()">
+                {{ item.tipoCredito }}
+              </span>
+            </td>
+            <td class="simples">
+              <span class="status" [class]="item.simplesNacional ? 'status-sim' : 'status-nao'">
+                {{ item.simplesNacional ? 'Sim' : 'Não' }}
+              </span>
+            </td>
+            <td class="aliquota">{{ item.aliquota | number:'1.1-1' }}%</td>
+            <td class="valor">{{ item.valorFaturado | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="valor">{{ item.valorDeducao | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="valor">{{ item.baseCalculo | currency:'BRL':'symbol':'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mensagem quando não há resultados -->
+  <div *ngIf="!carregando && !erro && buscaRealizada && resultado.length === 0" class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h3>Nenhum crédito encontrado</h3>
+    <p>Verifique se o número informado está correto e tente novamente.</p>
   </div>
 </div>
